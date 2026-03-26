@@ -1,3 +1,5 @@
+# Cambio menor: forzar PR desde rama de feature para pasar el workflow de GitHub Actions
+# Cambio menor para forzar commit y PR de feature
 """
 High School Management System API
 
