@@ -19,8 +19,30 @@ current_dir = Path(__file__).parent
 app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
           "static")), name="static")
 
+from pydantic import BaseModel
+from typing import Optional
+
 # In-memory activity database
 activities = {
+    class ActivityCreate(BaseModel):
+        name: str
+        description: str
+        schedule: str
+        max_participants: int
+        # Opcional: lista inicial de participantes
+        participants: Optional[list[str]] = []
+
+    @app.post("/activities/create")
+    def create_activity(activity: ActivityCreate):
+        if activity.name in activities:
+            raise HTTPException(status_code=400, detail="Activity already exists")
+        activities[activity.name] = {
+            "description": activity.description,
+            "schedule": activity.schedule,
+            "max_participants": activity.max_participants,
+            "participants": activity.participants or []
+        }
+        return {"message": f"Activity '{activity.name}' created successfully"}
     "Chess Club": {
         "description": "Learn strategies and compete in chess tournaments",
         "schedule": "Fridays, 3:30 PM - 5:00 PM",
